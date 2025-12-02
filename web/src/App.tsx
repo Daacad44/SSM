@@ -369,56 +369,59 @@ function App() {
   return (
     <div className="min-h-screen text-slate-900">
       <div className="max-w-6xl mx-auto px-4 py-10 space-y-8">
-        <header className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div>
-            <p className="uppercase tracking-[0.3em] text-xs text-slate-500">Semester & Study Manager</p>
-            <h1 className="text-3xl md:text-4xl font-bold font-display text-slate-900 mt-1">Stay ahead this semester</h1>
-            <p className="text-slate-600 mt-2 max-w-2xl">
-              Track semesters, courses, activities, alarms, and reports. Offline-first with Supabase sync, scheduled emails, and report exports ready for
-              Vercel.
-            </p>
+        <header className="space-y-6">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+              <p className="uppercase tracking-[0.3em] text-xs text-slate-500">Semester & Study Manager</p>
+              <h1 className="text-3xl md:text-4xl font-bold font-display text-slate-900 mt-1">Stay ahead this semester</h1>
+              <p className="text-slate-600 mt-2 max-w-2xl">
+                Track semesters, courses, activities, alarms, files, and reports. Offline-first with Supabase sync, scheduled emails, and report exports.
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <button
+                className="px-4 py-2 rounded-full bg-indigo-600 text-white shadow-card hover:bg-indigo-700 transition"
+                onClick={() => syncNow().catch(console.error)}
+              >
+                Sync to Supabase
+              </button>
+              <button
+                className="px-4 py-2 rounded-full bg-slate-100 text-slate-700 border border-slate-200 transition"
+                onClick={() => supabase.auth.signOut()}
+              >
+                Sign out
+              </button>
+            </div>
           </div>
-          <button
-            className="px-4 py-2 rounded-full bg-indigo-600 text-white shadow-card hover:bg-indigo-700 transition"
-            onClick={() => syncNow().catch(console.error)}
-          >
-            Sync to Supabase
-          </button>
-          <button
-            className="px-4 py-2 rounded-full bg-slate-100 text-slate-700 border border-slate-200 transition"
-            onClick={() => supabase.auth.signOut()}
-          >
-            Sign out
-          </button>
-        </header>
 
-        <div className="grid md:grid-cols-4 gap-4">
-          <div className="p-4 bg-white rounded-2xl shadow-card border border-indigo-50">
-            <p className="text-sm text-slate-500">Semesters</p>
-            <p className="text-2xl font-semibold">{stats.semesters}</p>
+          <div className="grid md:grid-cols-6 gap-3">
+            <div className="p-4 bg-white rounded-2xl shadow-card border border-indigo-50">
+              <p className="text-xs text-slate-500">Semesters</p>
+              <p className="text-2xl font-semibold">{stats.semesters}</p>
+            </div>
+            <div className="p-4 bg-white rounded-2xl shadow-card border border-emerald-50">
+              <p className="text-xs text-slate-500">Courses</p>
+              <p className="text-2xl font-semibold">{stats.courses}</p>
+            </div>
+            <div className="p-4 bg-white rounded-2xl shadow-card border border-amber-50">
+              <p className="text-xs text-slate-500">Open Activities</p>
+              <p className="text-2xl font-semibold">{stats.openActivities}</p>
+            </div>
+            <div className="p-4 bg-white rounded-2xl shadow-card border border-rose-50">
+              <p className="text-xs text-slate-500">Overdue</p>
+              <p className="text-2xl font-semibold text-rose-600">{stats.overdue}</p>
+            </div>
+            <div className="p-4 bg-white rounded-2xl shadow-card border border-sky-50">
+              <p className="text-xs text-slate-500">Subjects</p>
+              <p className="text-2xl font-semibold">{lessonStats.subjects}</p>
+            </div>
+            <div className="p-4 bg-white rounded-2xl shadow-card border border-slate-50">
+              <p className="text-xs text-slate-500">Files</p>
+              <p className="text-2xl font-semibold">{lessonStats.files}</p>
+              <p className="text-xs text-slate-500">{lessonStats.totalSizeMb.toFixed(2)} MB</p>
+            </div>
           </div>
-          <div className="p-4 bg-white rounded-2xl shadow-card border border-emerald-50">
-            <p className="text-sm text-slate-500">Courses</p>
-            <p className="text-2xl font-semibold">{stats.courses}</p>
-          </div>
-          <div className="p-4 bg-white rounded-2xl shadow-card border border-amber-50">
-            <p className="text-sm text-slate-500">Open Activities</p>
-            <p className="text-2xl font-semibold">{stats.openActivities}</p>
-          </div>
-          <div className="p-4 bg-white rounded-2xl shadow-card border border-rose-50">
-            <p className="text-sm text-slate-500">Overdue</p>
-            <p className="text-2xl font-semibold text-rose-600">{stats.overdue}</p>
-          </div>
-          <div className="p-4 bg-white rounded-2xl shadow-card border border-sky-50">
-            <p className="text-sm text-slate-500">Subjects</p>
-            <p className="text-2xl font-semibold">{lessonStats.subjects}</p>
-          </div>
-          <div className="p-4 bg-white rounded-2xl shadow-card border border-slate-50">
-            <p className="text-sm text-slate-500">Files</p>
-            <p className="text-2xl font-semibold">{lessonStats.files}</p>
-            <p className="text-xs text-slate-500">{lessonStats.totalSizeMb.toFixed(2)} MB</p>
-          </div>
-        </div>
+        </header>
 
         <div className="grid md:grid-cols-2 gap-6">
           <SectionCard title="Add Semester">
@@ -630,6 +633,17 @@ function App() {
             })}
           </div>
         </SectionCard>
+
+        <footer className="mt-10 bg-white border border-slate-100 rounded-2xl shadow-card p-6">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+              <p className="text-sm text-slate-600">Contact</p>
+              <p className="text-sm text-slate-700">Gmail: <a className="text-indigo-600" href="mailto:daacaddeveloper@gmail.com">daacaddeveloper@gmail.com</a></p>
+              <p className="text-sm text-slate-700">Phone: <a className="text-indigo-600" href="tel:+252612599355">+252612599355</a></p>
+            </div>
+            <p className="text-xs text-slate-500">Manage your semesters, courses, activities, and files from one dashboard.</p>
+          </div>
+        </footer>
       </div>
     </div>
   )
