@@ -367,302 +367,331 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen text-slate-900">
-      <div className="sticky top-0 z-10 bg-white/80 backdrop-blur border-b border-slate-200">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <img src="/logo-ssm.svg" alt="SSM" className="h-10 w-10" />
-            <div>
-              <p className="text-xs uppercase tracking-[0.3em] text-slate-500">SSM Dashboard</p>
-              <p className="text-sm text-slate-700">Stay organized</p>
+    <div className="min-h-screen bg-slate-50 text-slate-900">
+      <div className="flex">
+        <aside className="hidden lg:flex w-64 min-h-screen bg-white border-r border-slate-200 flex-col justify-between py-6 px-5 sticky top-0">
+          <div className="space-y-6">
+            <div className="flex items-center gap-3">
+              <img src="/logo-ssm.svg" alt="SSM" className="h-10 w-10" />
+              <div>
+                <p className="text-xs uppercase tracking-[0.3em] text-slate-500">SSM</p>
+                <p className="text-sm font-semibold text-slate-800">Study Manager</p>
+              </div>
+            </div>
+            <nav className="space-y-2 text-sm">
+              <a href="#dashboard" className="block px-3 py-2 rounded-xl bg-indigo-50 text-indigo-700">Dashboard</a>
+              <a href="#files-section" className="block px-3 py-2 rounded-xl hover:bg-slate-100">Files</a>
+              <a href="#contact" className="block px-3 py-2 rounded-xl hover:bg-slate-100">Contact</a>
+            </nav>
+            <div className="space-y-2">
+              <p className="text-xs uppercase text-slate-500">Subjects</p>
+              <div className="space-y-1">
+                {subjects.slice(0, 5).map((s) => (
+                  <div key={s.id} className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50">
+                    <span className="h-2 w-2 rounded-full" style={{ backgroundColor: s.color || '#6366f1' }} />
+                    <p className="text-sm text-slate-700 truncate">{s.name}</p>
+                  </div>
+                ))}
+                {subjects.length === 0 && <p className="text-xs text-slate-500 px-3">No subjects yet</p>}
+              </div>
             </div>
           </div>
-          <nav className="flex items-center gap-4 text-sm text-slate-600">
-            <a href="#dashboard" className="hover:text-indigo-600">Overview</a>
-            <a href="#files-section" className="hover:text-indigo-600">Files</a>
-            <a href="#contact" className="hover:text-indigo-600">Contact</a>
-          </nav>
-        </div>
-      </div>
+          <div className="text-xs text-slate-500 px-1">Signed in as {session.user.email}</div>
+        </aside>
 
-      <div className="max-w-6xl mx-auto px-4 py-10 space-y-8">
-        <header id="dashboard" className="space-y-6">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div>
-              <p className="uppercase tracking-[0.3em] text-xs text-slate-500">Semester & Study Manager</p>
-              <h1 className="text-3xl md:text-4xl font-bold font-display text-slate-900 mt-1">Stay ahead this semester</h1>
-              <p className="text-slate-600 mt-2 max-w-2xl">
-                Track semesters, courses, activities, alarms, files, and reports. Offline-first with Supabase sync, scheduled emails, and report exports.
-              </p>
-            </div>
-            <div className="flex gap-2">
-              <button
-                className="px-4 py-2 rounded-full bg-indigo-600 text-white shadow-card hover:bg-indigo-700 transition"
-                onClick={() => syncNow().catch(console.error)}
-              >
-                Sync to Supabase
-              </button>
-              <button
-                className="px-4 py-2 rounded-full bg-slate-100 text-slate-700 border border-slate-200 transition"
-                onClick={() => supabase.auth.signOut()}
-              >
-                Sign out
-              </button>
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-6 gap-3">
-            <div className="p-4 bg-white rounded-2xl shadow-card border border-indigo-50">
-              <p className="text-xs text-slate-500">Semesters</p>
-              <p className="text-2xl font-semibold">{stats.semesters}</p>
-            </div>
-            <div className="p-4 bg-white rounded-2xl shadow-card border border-emerald-50">
-              <p className="text-xs text-slate-500">Courses</p>
-              <p className="text-2xl font-semibold">{stats.courses}</p>
-            </div>
-            <div className="p-4 bg-white rounded-2xl shadow-card border border-amber-50">
-              <p className="text-xs text-slate-500">Open Activities</p>
-              <p className="text-2xl font-semibold">{stats.openActivities}</p>
-            </div>
-            <div className="p-4 bg-white rounded-2xl shadow-card border border-rose-50">
-              <p className="text-xs text-slate-500">Overdue</p>
-              <p className="text-2xl font-semibold text-rose-600">{stats.overdue}</p>
-            </div>
-            <div className="p-4 bg-white rounded-2xl shadow-card border border-sky-50">
-              <p className="text-xs text-slate-500">Subjects</p>
-              <p className="text-2xl font-semibold">{lessonStats.subjects}</p>
-            </div>
-            <div className="p-4 bg-white rounded-2xl shadow-card border border-slate-50">
-              <p className="text-xs text-slate-500">Files</p>
-              <p className="text-2xl font-semibold">{lessonStats.files}</p>
-              <p className="text-xs text-slate-500">{lessonStats.totalSizeMb.toFixed(2)} MB</p>
-            </div>
-          </div>
-        </header>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          <SectionCard title="Add Semester">
-            <form className="grid grid-cols-2 gap-3" onSubmit={handleSemesterSubmit}>
-              <input className="input" placeholder="Title" value={semesterForm.title} onChange={(e) => setSemesterForm({ ...semesterForm, title: e.target.value })} required />
-              <input
-                className="input"
-                placeholder="Year"
-                type="number"
-                value={semesterForm.year}
-                onChange={(e) => setSemesterForm({ ...semesterForm, year: Number(e.target.value) })}
-                required
-              />
-              <input className="input" type="date" value={semesterForm.start_date} onChange={(e) => setSemesterForm({ ...semesterForm, start_date: e.target.value })} required />
-              <input className="input" type="date" value={semesterForm.end_date} onChange={(e) => setSemesterForm({ ...semesterForm, end_date: e.target.value })} required />
-              <select
-                className="input col-span-2"
-                value={semesterForm.status}
-                onChange={(e) => setSemesterForm({ ...semesterForm, status: e.target.value as SemesterStatus })}
-              >
-                <option value="current">Current</option>
-                <option value="upcoming">Upcoming</option>
-                <option value="past">Past</option>
-              </select>
-              <button className="btn col-span-2">Save Semester</button>
-            </form>
-          </SectionCard>
-
-          <SectionCard title="Add Course">
-            <form className="grid grid-cols-2 gap-3" onSubmit={handleCourseSubmit}>
-              <select className="input col-span-2" value={courseForm.semester_id} onChange={(e) => setCourseForm({ ...courseForm, semester_id: e.target.value })} required>
-                <option value="">Select Semester</option>
-                {semesters.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.title} {s.year}
-                  </option>
-                ))}
-              </select>
-              <input className="input" placeholder="Code" value={courseForm.code} onChange={(e) => setCourseForm({ ...courseForm, code: e.target.value })} required />
-              <input className="input" placeholder="Title" value={courseForm.title} onChange={(e) => setCourseForm({ ...courseForm, title: e.target.value })} required />
-              <input className="input" placeholder="Lecturer" value={courseForm.lecturer} onChange={(e) => setCourseForm({ ...courseForm, lecturer: e.target.value })} />
-              <input
-                className="input"
-                type="number"
-                placeholder="Credits"
-                value={courseForm.credits}
-                onChange={(e) => setCourseForm({ ...courseForm, credits: Number(e.target.value) })}
-              />
-              <button className="btn col-span-2">Save Course</button>
-            </form>
-          </SectionCard>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          <SectionCard title="Add Activity">
-            <form className="grid grid-cols-2 gap-3" onSubmit={handleActivitySubmit}>
-              <select className="input col-span-2" value={activityForm.course_id} onChange={(e) => setActivityForm({ ...activityForm, course_id: e.target.value })} required>
-                <option value="">Select Course</option>
-                {courses.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.title}
-                  </option>
-                ))}
-              </select>
-              <select
-                className="input"
-                value={activityForm.type}
-                onChange={(e) => setActivityForm({ ...activityForm, type: e.target.value as ActivityType })}
-              >
-                {activityTypes.map((t) => (
-                  <option value={t.value} key={t.value}>
-                    {t.label}
-                  </option>
-                ))}
-              </select>
-              <input className="input" placeholder="Title" value={activityForm.title} onChange={(e) => setActivityForm({ ...activityForm, title: e.target.value })} required />
-              <input className="input" type="datetime-local" value={activityForm.due_at} onChange={(e) => setActivityForm({ ...activityForm, due_at: e.target.value })} required />
-              <textarea
-                className="input col-span-2"
-                placeholder="Description"
-                value={activityForm.description}
-                onChange={(e) => setActivityForm({ ...activityForm, description: e.target.value })}
-              />
-              <button className="btn col-span-2">Save Activity</button>
-            </form>
-          </SectionCard>
-
-          <SectionCard title="Add Alarm">
-            <form className="grid grid-cols-2 gap-3" onSubmit={handleAlarmSubmit}>
-              <select className="input col-span-2" value={alarmForm.activity_id} onChange={(e) => setAlarmForm({ ...alarmForm, activity_id: e.target.value })}>
-                <option value="">Attach to Activity (optional)</option>
-                {activities.map((a) => (
-                  <option key={a.id} value={a.id}>
-                    {a.title}
-                  </option>
-                ))}
-              </select>
-              <input className="input" placeholder="Label" value={alarmForm.label} onChange={(e) => setAlarmForm({ ...alarmForm, label: e.target.value })} required />
-              <input className="input" type="datetime-local" value={alarmForm.fire_at} onChange={(e) => setAlarmForm({ ...alarmForm, fire_at: e.target.value })} required />
-              <input
-                className="input"
-                type="number"
-                placeholder="Lead minutes"
-                value={alarmForm.lead_minutes}
-                onChange={(e) => setAlarmForm({ ...alarmForm, lead_minutes: Number(e.target.value) })}
-              />
-              <select className="input" value={alarmForm.channel} onChange={(e) => setAlarmForm({ ...alarmForm, channel: e.target.value as Alarm['channel'] })}>
-                <option value="both">Browser + Email</option>
-                <option value="browser">Browser</option>
-                <option value="email">Email</option>
-              </select>
-              <button className="btn col-span-2">Save Alarm</button>
-            </form>
-          </SectionCard>
-        </div>
-
-        <SectionCard title="Subjects & Lessons" >
-          <div id="files-section" />
-          <div className="grid md:grid-cols-3 gap-4">
-            <form className="space-y-3" onSubmit={handleSubjectSubmit}>
-              <p className="text-sm text-slate-600">Create subject</p>
-              <input className="input" placeholder="Subject name" value={subjectForm.name} onChange={(e) => setSubjectForm({ ...subjectForm, name: e.target.value })} required />
-              <input className="input" type="color" value={subjectForm.color} onChange={(e) => setSubjectForm({ ...subjectForm, color: e.target.value })} />
-              <button className="btn" type="submit">
-                Add subject
-              </button>
-            </form>
-
-            <form className="space-y-3 md:col-span-2" onSubmit={handleLessonUpload}>
-              <p className="text-sm text-slate-600">Upload lesson (PDF, PPT, Word, Excel)</p>
-              <div className="grid grid-cols-2 gap-3">
-                <select className="input col-span-2 md:col-span-1" value={selectedSubject} onChange={(e) => setSelectedSubject(e.target.value)} required>
-                  <option value="">Choose subject</option>
-                  {subjects.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.name}
-                    </option>
-                  ))}
-                </select>
-                <input
-                  className="input col-span-2 md:col-span-1"
-                  type="file"
-                  accept=".pdf,.ppt,.pptx,.doc,.docx,.xls,.xlsx,.csv"
-                  onChange={(e) => setLessonUploadFile(e.target.files?.[0] || null)}
-                  required
-                />
-                <button className="btn col-span-2" type="submit" disabled={uploading}>
-                  {uploading ? 'Uploading...' : 'Upload file'}
+        <div className="flex-1">
+          <div className="sticky top-0 z-10 bg-white/80 backdrop-blur border-b border-slate-200">
+            <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 rounded-xl bg-slate-100 px-3 py-2 w-full">
+                <span className="text-slate-500 text-sm">⌘K</span>
+                <input className="w-full bg-transparent outline-none text-sm text-slate-700" placeholder="Search..." />
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  className="px-3 py-2 rounded-xl bg-indigo-600 text-white text-sm shadow-card hover:bg-indigo-700 transition"
+                  onClick={() => syncNow().catch(console.error)}
+                >
+                  Sync
+                </button>
+                <button
+                  className="px-3 py-2 rounded-xl bg-white border border-slate-200 text-sm text-slate-700"
+                  onClick={() => supabase.auth.signOut()}
+                >
+                  Sign out
                 </button>
               </div>
-              {uploadError && <p className="text-sm text-rose-600">{uploadError}</p>}
-            </form>
+            </div>
           </div>
-        </SectionCard>
 
-        <SectionCard title="Lesson Library">
-          {lessonFiles.length === 0 && <p className="text-sm text-slate-500">No files yet. Create a subject and upload your lessons.</p>}
-          <div className="grid md:grid-cols-2 gap-3">
-            {lessonFiles.map((file) => {
-              const subj = subjects.find((s) => s.id === file.subject_id)
-              return (
-                <div key={file.id} className="flex items-center justify-between border border-slate-100 rounded-xl px-4 py-3 bg-slate-50">
-                  <div>
-                    <p className="font-semibold">{file.name}</p>
-                    <p className="text-xs text-slate-500">
-                      Subject: {subj?.name || '—'} · {(file.size || 0) / 1024 > 1 ? `${((file.size || 0) / 1024).toFixed(1)} KB` : `${file.size || 0} B`}
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    <button className="text-indigo-600 text-sm" type="button" onClick={() => handleViewLesson(file)} disabled={uploading}>
-                      View
-                    </button>
-                    <button className="text-rose-600 text-sm" type="button" onClick={() => handleDeleteLesson(file)} disabled={uploading}>
-                      Delete
-                    </button>
-                  </div>
+          <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
+            <header id="dashboard" className="space-y-3">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Dashboard</p>
+                  <h1 className="text-3xl font-display font-bold text-slate-900">Welcome back</h1>
+                  <p className="text-sm text-slate-600">Snapshot of your semesters, tasks, and files.</p>
                 </div>
-              )
-            })}
-          </div>
-          {signedUrlError && <p className="text-sm text-rose-600 mt-3">{signedUrlError}</p>}
-        </SectionCard>
+                <div className="flex gap-2 text-sm">
+                  <div className="px-3 py-2 rounded-xl bg-white border border-slate-200">Today: {new Date().toLocaleDateString()}</div>
+                </div>
+              </div>
 
-        <SectionCard title="Upcoming Activities">
-          <div className="space-y-3">
-            {activities.length === 0 && <p className="text-sm text-slate-500">Add an activity to see it here.</p>}
-            {activities.map((activity) => {
-              const course = courses.find((c) => c.id === activity.course_id)
-              return (
-                <div key={activity.id} className="flex items-center justify-between rounded-xl border border-slate-100 px-4 py-3">
-                  <div>
-                    <p className="text-sm text-slate-500">{course?.title || 'Course'}</p>
-                    <p className="font-semibold">{activity.title}</p>
-                    <p className="text-xs text-slate-500">{new Date(activity.due_at).toLocaleString()}</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="px-2 py-1 text-xs rounded-full bg-indigo-50 text-indigo-700 capitalize">{activity.type}</span>
+              <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-3">
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-indigo-500 text-white shadow-card">
+                  <p className="text-xs opacity-80">Semesters</p>
+                  <p className="text-2xl font-semibold">{stats.semesters}</p>
+                </div>
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 text-white shadow-card">
+                  <p className="text-xs opacity-80">Courses</p>
+                  <p className="text-2xl font-semibold">{stats.courses}</p>
+                </div>
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-card">
+                  <p className="text-xs opacity-80">Open Activities</p>
+                  <p className="text-2xl font-semibold">{stats.openActivities}</p>
+                </div>
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-rose-500 to-rose-600 text-white shadow-card">
+                  <p className="text-xs opacity-80">Overdue</p>
+                  <p className="text-2xl font-semibold">{stats.overdue}</p>
+                </div>
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-sky-500 to-blue-500 text-white shadow-card">
+                  <p className="text-xs opacity-80">Subjects</p>
+                  <p className="text-2xl font-semibold">{lessonStats.subjects}</p>
+                </div>
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-slate-700 to-slate-500 text-white shadow-card">
+                  <p className="text-xs opacity-80">Files</p>
+                  <p className="text-2xl font-semibold">{lessonStats.files}</p>
+                  <p className="text-xs opacity-70">{lessonStats.totalSizeMb.toFixed(2)} MB</p>
+                </div>
+              </div>
+            </header>
+
+            <div className="grid lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2 space-y-6">
+                <SectionCard title="Add Semester">
+                  <form className="grid grid-cols-2 gap-3" onSubmit={handleSemesterSubmit}>
+                    <input className="input" placeholder="Title" value={semesterForm.title} onChange={(e) => setSemesterForm({ ...semesterForm, title: e.target.value })} required />
+                    <input
+                      className="input"
+                      placeholder="Year"
+                      type="number"
+                      value={semesterForm.year}
+                      onChange={(e) => setSemesterForm({ ...semesterForm, year: Number(e.target.value) })}
+                      required
+                    />
+                    <input className="input" type="date" value={semesterForm.start_date} onChange={(e) => setSemesterForm({ ...semesterForm, start_date: e.target.value })} required />
+                    <input className="input" type="date" value={semesterForm.end_date} onChange={(e) => setSemesterForm({ ...semesterForm, end_date: e.target.value })} required />
+                    <select
+                      className="input col-span-2"
+                      value={semesterForm.status}
+                      onChange={(e) => setSemesterForm({ ...semesterForm, status: e.target.value as SemesterStatus })}
+                    >
+                      <option value="current">Current</option>
+                      <option value="upcoming">Upcoming</option>
+                      <option value="past">Past</option>
+                    </select>
+                    <button className="btn col-span-2">Save Semester</button>
+                  </form>
+                </SectionCard>
+
+                <SectionCard title="Add Course">
+                  <form className="grid grid-cols-2 gap-3" onSubmit={handleCourseSubmit}>
+                    <select className="input col-span-2" value={courseForm.semester_id} onChange={(e) => setCourseForm({ ...courseForm, semester_id: e.target.value })} required>
+                      <option value="">Select Semester</option>
+                      {semesters.map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.title} {s.year}
+                        </option>
+                      ))}
+                    </select>
+                    <input className="input" placeholder="Code" value={courseForm.code} onChange={(e) => setCourseForm({ ...courseForm, code: e.target.value })} required />
+                    <input className="input" placeholder="Title" value={courseForm.title} onChange={(e) => setCourseForm({ ...courseForm, title: e.target.value })} required />
+                    <input className="input" placeholder="Lecturer" value={courseForm.lecturer} onChange={(e) => setCourseForm({ ...courseForm, lecturer: e.target.value })} />
+                    <input
+                      className="input"
+                      type="number"
+                      placeholder="Credits"
+                      value={courseForm.credits}
+                      onChange={(e) => setCourseForm({ ...courseForm, credits: Number(e.target.value) })}
+                    />
+                    <button className="btn col-span-2">Save Course</button>
+                  </form>
+                </SectionCard>
+
+                <SectionCard title="Add Activity">
+                  <form className="grid grid-cols-2 gap-3" onSubmit={handleActivitySubmit}>
+                    <select className="input col-span-2" value={activityForm.course_id} onChange={(e) => setActivityForm({ ...activityForm, course_id: e.target.value })} required>
+                      <option value="">Select Course</option>
+                      {courses.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.title}
+                        </option>
+                      ))}
+                    </select>
                     <select
                       className="input"
-                      value={activity.status}
-                      onChange={(e) => markActivity(activity.id, e.target.value as Activity['status'])}
+                      value={activityForm.type}
+                      onChange={(e) => setActivityForm({ ...activityForm, type: e.target.value as ActivityType })}
                     >
-                      <option value="todo">To Do</option>
-                      <option value="in_progress">In Progress</option>
-                      <option value="done">Done</option>
+                      {activityTypes.map((t) => (
+                        <option value={t.value} key={t.value}>
+                          {t.label}
+                        </option>
+                      ))}
                     </select>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </SectionCard>
+                    <input className="input" placeholder="Title" value={activityForm.title} onChange={(e) => setActivityForm({ ...activityForm, title: e.target.value })} required />
+                    <input className="input" type="datetime-local" value={activityForm.due_at} onChange={(e) => setActivityForm({ ...activityForm, due_at: e.target.value })} required />
+                    <textarea
+                      className="input col-span-2"
+                      placeholder="Description"
+                      value={activityForm.description}
+                      onChange={(e) => setActivityForm({ ...activityForm, description: e.target.value })}
+                    />
+                    <button className="btn col-span-2">Save Activity</button>
+                  </form>
+                </SectionCard>
 
-        <footer id="contact" className="mt-10 bg-white border border-slate-100 rounded-2xl shadow-card p-6">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div>
-              <p className="text-sm text-slate-600">Contact</p>
-              <p className="text-sm text-slate-700">Gmail: <a className="text-indigo-600" href="mailto:daacaddeveloper@gmail.com">daacaddeveloper@gmail.com</a></p>
-              <p className="text-sm text-slate-700">Phone: <a className="text-indigo-600" href="tel:+252612599355">+252612599355</a></p>
+                <SectionCard title="Add Alarm">
+                  <form className="grid grid-cols-2 gap-3" onSubmit={handleAlarmSubmit}>
+                    <select className="input col-span-2" value={alarmForm.activity_id} onChange={(e) => setAlarmForm({ ...alarmForm, activity_id: e.target.value })}>
+                      <option value="">Attach to Activity (optional)</option>
+                      {activities.map((a) => (
+                        <option key={a.id} value={a.id}>
+                          {a.title}
+                        </option>
+                      ))}
+                    </select>
+                    <input className="input" placeholder="Label" value={alarmForm.label} onChange={(e) => setAlarmForm({ ...alarmForm, label: e.target.value })} required />
+                    <input className="input" type="datetime-local" value={alarmForm.fire_at} onChange={(e) => setAlarmForm({ ...alarmForm, fire_at: e.target.value })} required />
+                    <input
+                      className="input"
+                      type="number"
+                      placeholder="Lead minutes"
+                      value={alarmForm.lead_minutes}
+                      onChange={(e) => setAlarmForm({ ...alarmForm, lead_minutes: Number(e.target.value) })}
+                    />
+                    <select className="input" value={alarmForm.channel} onChange={(e) => setAlarmForm({ ...alarmForm, channel: e.target.value as Alarm['channel'] })}>
+                      <option value="both">Browser + Email</option>
+                      <option value="browser">Browser</option>
+                      <option value="email">Email</option>
+                    </select>
+                    <button className="btn col-span-2">Save Alarm</button>
+                  </form>
+                </SectionCard>
+              </div>
+
+              <div className="space-y-6">
+                <SectionCard title="Subjects & Lessons">
+                  <div id="files-section" />
+                  <div className="space-y-4">
+                    <form className="space-y-3" onSubmit={handleSubjectSubmit}>
+                      <p className="text-sm text-slate-600">Create subject</p>
+                      <input className="input" placeholder="Subject name" value={subjectForm.name} onChange={(e) => setSubjectForm({ ...subjectForm, name: e.target.value })} required />
+                      <input className="input" type="color" value={subjectForm.color} onChange={(e) => setSubjectForm({ ...subjectForm, color: e.target.value })} />
+                      <button className="btn" type="submit">
+                        Add subject
+                      </button>
+                    </form>
+
+                    <form className="space-y-3" onSubmit={handleLessonUpload}>
+                      <p className="text-sm text-slate-600">Upload lesson (PDF, PPT, Word, Excel)</p>
+                      <div className="space-y-2">
+                        <select className="input" value={selectedSubject} onChange={(e) => setSelectedSubject(e.target.value)} required>
+                          <option value="">Choose subject</option>
+                          {subjects.map((s) => (
+                            <option key={s.id} value={s.id}>
+                              {s.name}
+                            </option>
+                          ))}
+                        </select>
+                        <input
+                          className="input"
+                          type="file"
+                          accept=".pdf,.ppt,.pptx,.doc,.docx,.xls,.xlsx,.csv"
+                          onChange={(e) => setLessonUploadFile(e.target.files?.[0] || null)}
+                          required
+                        />
+                        <button className="btn w-full" type="submit" disabled={uploading}>
+                          {uploading ? 'Uploading...' : 'Upload file'}
+                        </button>
+                      </div>
+                      {uploadError && <p className="text-sm text-rose-600">{uploadError}</p>}
+                    </form>
+                  </div>
+                </SectionCard>
+
+                <SectionCard title="Lesson Library">
+                  {lessonFiles.length === 0 && <p className="text-sm text-slate-500">No files yet. Create a subject and upload your lessons.</p>}
+                  <div className="space-y-2">
+                    {lessonFiles.map((file) => {
+                      const subj = subjects.find((s) => s.id === file.subject_id)
+                      return (
+                        <div key={file.id} className="flex items-center justify-between border border-slate-100 rounded-xl px-4 py-3 bg-slate-50">
+                          <div>
+                            <p className="font-semibold">{file.name}</p>
+                            <p className="text-xs text-slate-500">
+                              Subject: {subj?.name || '—'} · {(file.size || 0) / 1024 > 1 ? `${((file.size || 0) / 1024).toFixed(1)} KB` : `${file.size || 0} B`}
+                            </p>
+                          </div>
+                          <div className="flex gap-2">
+                            <button className="text-indigo-600 text-sm" type="button" onClick={() => handleViewLesson(file)} disabled={uploading}>
+                              View
+                            </button>
+                            <button className="text-rose-600 text-sm" type="button" onClick={() => handleDeleteLesson(file)} disabled={uploading}>
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                  {signedUrlError && <p className="text-sm text-rose-600 mt-3">{signedUrlError}</p>}
+                </SectionCard>
+
+                <SectionCard title="Upcoming Activities">
+                  <div className="space-y-3">
+                    {activities.length === 0 && <p className="text-sm text-slate-500">Add an activity to see it here.</p>}
+                    {activities.map((activity) => {
+                      const course = courses.find((c) => c.id === activity.course_id)
+                      return (
+                        <div key={activity.id} className="flex items-center justify-between rounded-xl border border-slate-100 px-4 py-3">
+                          <div>
+                            <p className="text-sm text-slate-500">{course?.title || 'Course'}</p>
+                            <p className="font-semibold">{activity.title}</p>
+                            <p className="text-xs text-slate-500">{new Date(activity.due_at).toLocaleString()}</p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="px-2 py-1 text-xs rounded-full bg-indigo-50 text-indigo-700 capitalize">{activity.type}</span>
+                            <select
+                              className="input"
+                              value={activity.status}
+                              onChange={(e) => markActivity(activity.id, e.target.value as Activity['status'])}
+                            >
+                              <option value="todo">To Do</option>
+                              <option value="in_progress">In Progress</option>
+                              <option value="done">Done</option>
+                            </select>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </SectionCard>
+              </div>
             </div>
-            <p className="text-xs text-slate-500">Manage your semesters, courses, activities, and files from one dashboard.</p>
-            <img src="/logo-ssm.svg" alt="SSM logo" className="h-10 w-10" />
+
+            <footer id="contact" className="mt-4 bg-white border border-slate-100 rounded-2xl shadow-card p-6">
+              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                  <p className="text-sm text-slate-600">Contact</p>
+                  <p className="text-sm text-slate-700">Gmail: <a className="text-indigo-600" href="mailto:daacaddeveloper@gmail.com">daacaddeveloper@gmail.com</a></p>
+                  <p className="text-sm text-slate-700">Phone: <a className="text-indigo-600" href="tel:+252612599355">+252612599355</a></p>
+                </div>
+                <p className="text-xs text-slate-500">Manage your semesters, courses, activities, and files from one dashboard.</p>
+                <img src="/logo-ssm.svg" alt="SSM logo" className="h-10 w-10" />
+              </div>
+            </footer>
           </div>
-        </footer>
+        </div>
       </div>
     </div>
   )
