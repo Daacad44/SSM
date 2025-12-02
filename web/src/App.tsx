@@ -368,8 +368,25 @@ function App() {
 
   return (
     <div className="min-h-screen text-slate-900">
+      <div className="sticky top-0 z-10 bg-white/80 backdrop-blur border-b border-slate-200">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <img src="/logo-ssm.svg" alt="SSM" className="h-10 w-10" />
+            <div>
+              <p className="text-xs uppercase tracking-[0.3em] text-slate-500">SSM Dashboard</p>
+              <p className="text-sm text-slate-700">Stay organized</p>
+            </div>
+          </div>
+          <nav className="flex items-center gap-4 text-sm text-slate-600">
+            <a href="#dashboard" className="hover:text-indigo-600">Overview</a>
+            <a href="#files-section" className="hover:text-indigo-600">Files</a>
+            <a href="#contact" className="hover:text-indigo-600">Contact</a>
+          </nav>
+        </div>
+      </div>
+
       <div className="max-w-6xl mx-auto px-4 py-10 space-y-8">
-        <header className="space-y-6">
+        <header id="dashboard" className="space-y-6">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div>
               <p className="uppercase tracking-[0.3em] text-xs text-slate-500">Semester & Study Manager</p>
@@ -538,7 +555,8 @@ function App() {
           </SectionCard>
         </div>
 
-        <SectionCard title="Subjects & Lessons">
+        <SectionCard title="Subjects & Lessons" >
+          <div id="files-section" />
           <div className="grid md:grid-cols-3 gap-4">
             <form className="space-y-3" onSubmit={handleSubjectSubmit}>
               <p className="text-sm text-slate-600">Create subject</p>
@@ -634,7 +652,7 @@ function App() {
           </div>
         </SectionCard>
 
-        <footer className="mt-10 bg-white border border-slate-100 rounded-2xl shadow-card p-6">
+        <footer id="contact" className="mt-10 bg-white border border-slate-100 rounded-2xl shadow-card p-6">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div>
               <p className="text-sm text-slate-600">Contact</p>
@@ -642,6 +660,7 @@ function App() {
               <p className="text-sm text-slate-700">Phone: <a className="text-indigo-600" href="tel:+252612599355">+252612599355</a></p>
             </div>
             <p className="text-xs text-slate-500">Manage your semesters, courses, activities, and files from one dashboard.</p>
+            <img src="/logo-ssm.svg" alt="SSM logo" className="h-10 w-10" />
           </div>
         </footer>
       </div>

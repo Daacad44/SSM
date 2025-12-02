@@ -1,0 +1,6 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" stroke-width="6" stroke-linejoin="round">
+  <path d="M30 50v100c30-12 60-12 90 0V50c-30-12-60-12-90 0Z"/>
+  <path d="M80 68v100"/>
+  <path d="M110 50v100c30-12 60-12 90 0V50c-30-12-60-12-90 0Z"/>
+  <text x="100" y="180" text-anchor="middle" font-size="28" font-family="Inter, Arial, sans-serif" font-weight="700">SSM</text>
+</svg>
