@@ -8,7 +8,7 @@ Mobile-first web app for tracking semesters, courses, activities, alarms, and we
 - Offline cache via IndexedDB + Service Worker for notifications
 
 ## Quickstart (local)
-1. `cd web && cp .env.example .env` then set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
+1. `cd frontend && cp .env.example .env` then set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
 2. `npm install`
 3. `npm run dev`
 4. Visit http://localhost:5173. Press “Sync to Supabase” after adding data to push queued items.
@@ -25,7 +25,7 @@ Mobile-first web app for tracking semesters, courses, activities, alarms, and we
 6. Configure Supabase scheduled job (or Vercel Cron) to call `email-reminders` every 15 minutes.
 
 ## Vercel deployment
-1. In Vercel, import `web` folder as project.
+1. In Vercel, import `frontend` folder as project.
 2. Env vars: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`.
 3. Add cron job (see `infra/vercel.json`) if using Vercel serverless instead of Supabase Cron.
 
@@ -44,7 +44,7 @@ Mobile-first web app for tracking semesters, courses, activities, alarms, and we
 - `infra/supabase/seed.sql` – demo rows.
 - `functions/email-reminders` – scheduled email reminders.
 - `functions/generate-report` – weekly export to PDF/XLSX.
-- `web/src` – React client, offline cache, notification helpers.
+- `frontend/src` – React client, offline cache, notification helpers.
 
 ## Environment reference
 ```
