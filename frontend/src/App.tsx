@@ -11,7 +11,7 @@ import { deleteLessonFile, getLessonSignedUrl, listLessonFiles, uploadLessonFile
 
 function SectionCard({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <div className="rounded-2xl bg-white shadow-card p-5 border border-slate-100">
+    <div className="rounded-2xl bg-white dark:bg-slate-800 shadow-card p-5 border border-slate-100 dark:border-slate-700 text-slate-900 dark:text-slate-100">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
       </div>
@@ -46,6 +46,12 @@ function App() {
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState('')
   const [signedUrlError, setSignedUrlError] = useState('')
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    if (typeof window === 'undefined') return 'light'
+    const stored = localStorage.getItem('ssm-theme') as 'light' | 'dark' | null
+    if (stored) return stored
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  })
   const siteUrl = (import.meta.env.VITE_SITE_URL as string) || window.location.origin
 
   const {
@@ -122,6 +128,15 @@ function App() {
       listener.subscription.unsubscribe()
     }
   }, [])
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+    localStorage.setItem('ssm-theme', theme)
+  }, [theme])
 
   useEffect(() => {
     setCourseForm((prev) => ({ ...prev, semester_id: semesters[semesters.length - 1]?.id || '' }))
@@ -283,6 +298,8 @@ function App() {
     }
   }
 
+  const toggleTheme = () => setTheme((prev) => (prev === 'light' ? 'dark' : 'light'))
+
   const handleViewLesson = async (file: LessonFile) => {
     setSignedUrlError('')
     try {
@@ -368,9 +385,9 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
+    <div className={`min-h-screen ${theme === 'dark' ? 'bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
       <div className="flex">
-        <aside className="hidden lg:flex w-64 min-h-screen bg-white border-r border-slate-200 flex-col justify-between py-6 px-5 sticky top-0">
+        <aside className="hidden lg:flex w-64 min-h-screen bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex-col justify-between py-6 px-5 sticky top-0">
           <div className="space-y-6">
             <div className="flex items-center gap-3">
               <img src="/logo-ssm.svg" alt="SSM" className="h-10 w-10" />
@@ -401,21 +418,27 @@ function App() {
         </aside>
 
         <div className="flex-1">
-          <div className="sticky top-0 z-10 bg-white/80 backdrop-blur border-b border-slate-200">
+          <div className="sticky top-0 z-10 bg-white/80 dark:bg-slate-900/80 backdrop-blur border-b border-slate-200 dark:border-slate-800">
             <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2 rounded-xl bg-slate-100 px-3 py-2 w-full">
+              <div className="flex items-center gap-2 rounded-xl bg-slate-100 dark:bg-slate-800 px-3 py-2 w-full">
                 <span className="text-slate-500 text-sm">⌘K</span>
-                <input className="w-full bg-transparent outline-none text-sm text-slate-700" placeholder="Search..." />
+                <input className="w-full bg-transparent outline-none text-sm text-slate-700 dark:text-slate-200" placeholder="Search..." />
               </div>
               <div className="flex items-center gap-2">
                 <button
-                  className="px-3 py-2 rounded-xl bg-indigo-600 text-white text-sm shadow-card hover:bg-indigo-700 transition"
+                  className="px-3 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 text-sm text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700"
+                  onClick={toggleTheme}
+                >
+                  {theme === 'light' ? 'Dark' : 'Light'}
+                </button>
+                <button
+                  className="px-3 py-2 rounded-xl bg-indigo-600 dark:bg-indigo-500 text-white text-sm shadow-card hover:bg-indigo-700 dark:hover:bg-indigo-600 transition"
                   onClick={() => syncNow().catch(console.error)}
                 >
                   Sync
                 </button>
                 <button
-                  className="px-3 py-2 rounded-xl bg-white border border-slate-200 text-sm text-slate-700"
+                  className="px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-700 dark:text-slate-200"
                   onClick={() => supabase.auth.signOut()}
                 >
                   Sign out
