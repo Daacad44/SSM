@@ -33,7 +33,7 @@ Mobile-first web app for tracking semesters, courses, activities, alarms, and we
 - Offline queue stored in IndexedDB (`localCache.ts`) and synced with Supabase via `syncNow`.
 - Service worker (`public/sw.js`) provides push + notification click handling. Browser alarms show notifications and play ringtone (audio user gesture required once).
 - UI components live in `src/App.tsx`; state in `src/store/useSSMStore.ts`.
-- Auth: Supabase email/password registration (verification email required), email OTP login flow, and password reset email. Use a Gmail address to receive codes quickly. Env must include `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
+- Auth: Supabase email/password registration (verification email required), email OTP login flow, and password reset email. Use a Gmail address to receive codes quickly. Env must include `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (set `VITE_SITE_URL` to control auth email redirect links).
 - Lessons library: subjects + uploads for PDF/PPT/Word/Excel. Uses Supabase Storage bucket (default `attachments`, override with `VITE_SUPABASE_BUCKET`). Files stored under `<userId>/<subjectId>/filename` with view/delete from the dashboard.
 
 ## Reports
@@ -53,6 +53,7 @@ VITE_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=             # for edge functions
 EMAIL_WEBHOOK=                         # provider endpoint
 REPORT_BUCKET=reports
+VITE_SITE_URL=                        # e.g. https://your-frontend-domain.com
 ```
 
 ## Acceptance checklist

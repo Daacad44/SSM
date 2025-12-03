@@ -46,6 +46,7 @@ function App() {
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState('')
   const [signedUrlError, setSignedUrlError] = useState('')
+  const siteUrl = (import.meta.env.VITE_SITE_URL as string) || window.location.origin
 
   const {
     semesters,
@@ -161,7 +162,7 @@ function App() {
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}`
+        emailRedirectTo: `${siteUrl}`
       }
     })
     setIsLoading(false)
@@ -183,7 +184,7 @@ function App() {
     setAuthMessage('')
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: `${window.location.origin}` }
+      options: { emailRedirectTo: `${siteUrl}` }
     })
     setIsLoading(false)
     setAuthMessage(error ? error.message : 'Code sent to your email. Enter it below.')
@@ -203,7 +204,7 @@ function App() {
     setIsLoading(true)
     setAuthMessage('')
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset`
+      redirectTo: `${siteUrl}/reset`
     })
     setIsLoading(false)
     setAuthMessage(error ? error.message : 'Reset email sent. Check your inbox for the code/link.')
